@@ -11,4 +11,14 @@ public class ResourceAppoint {
     public ObservableList getList(){
         return listAppoint;
     }
+
+    public void setListAppoint(ObservableList<Appointment> listAppoint) {
+        this.listAppoint = listAppoint;
+    }
+    public void remove(Appointment appointment){
+        listAppoint.remove(appointment);
+    }
+
+
+
 }
