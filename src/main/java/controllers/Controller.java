@@ -43,6 +43,7 @@ public class Controller {
         comboBoxHr.setValue("00");
         datePicker.setValue(LocalDate.now());
 
+
     }public void handleBtnAdd(ActionEvent e)throws  ParseException{
         //System.out.println("1");
         LocalDate time = datePicker.getValue();
