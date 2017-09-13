@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import models.Appointment;
-import models.Database;
+import Database.Database;
 import models.ResourceAppoint;
 import javafx.scene.input.MouseEvent;
 
@@ -37,6 +37,14 @@ public class Controller {
     private Database database;
     private Appointment edit;
     private boolean checkE;
+    @FXML
+    private RadioButton rbD;
+    @FXML
+    private RadioButton rbW;
+    @FXML
+    private RadioButton rbM;
+    @FXML
+    private DatePicker datePickerSearch;
 
 
     public Controller(){
@@ -76,6 +84,8 @@ public class Controller {
         cm.getItems().add(menu2);
         menu1.setOnAction(event -> edit());
         menu2.setOnAction(event -> delete());
+       // boxD.setOnAction(event -> handleCheckBox(boxD,boxW,boxM));
+
         listView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -99,12 +109,13 @@ public class Controller {
             edit.setMinute(comboBoxMin.getValue().toString());
             database.editData(edit,t);
             checkE = false;
+            resetField();
 
         }else {
             //System.out.println("1");
 
             Appointment event = new Appointment(textField.getText(), time.getDayOfMonth(), time.getMonthValue()
-                    , time.getYear(), comboBoxHr.getValue().toString(), comboBoxMin.getValue().toString());
+                    , time.getYear(), comboBoxHr.getValue().toString(), comboBoxMin.getValue().toString(),repeatSelect());
 
             resourceAppoint.AddAppoint(event);
             database.addData(event);
@@ -115,6 +126,12 @@ public class Controller {
         }
         listView.setItems(resourceAppoint.getList());
         resetField();
+        listView.refresh();
+
+    }
+    public void searchDate(){
+        LocalDate date = datePickerSearch.getValue();
+        listView.setItems(resourceAppoint.searchAppoint(date));
         listView.refresh();
 
     }
@@ -132,7 +149,22 @@ public class Controller {
                 comboBoxHr.setValue(edit.getHour());
             }
             comboBoxMin.setValue(edit.getMinute());
+            if(edit.getRepeat().equals("Daily")){
+                rbD.setSelected(true);
 
+            }
+            else if(edit.getRepeat().equals("Weekly")){
+                rbW.setSelected(true);
+
+            }
+            else{
+                rbM.setSelected(true);
+
+            }
+            rbD.setDisable(true);
+            rbW.setDisable(true);
+            rbM.setDisable(true);
+            refresh();
             //LocalDate dateEdit = LocalDate.parse(select.getDate().substring(6,10)+"-"+select.getDate().substring(0,2)+"-"+select.getDate().substring(3,5));
             //datePicker.setValue(dateEdit);
 
@@ -146,7 +178,29 @@ public class Controller {
             resourceAppoint.remove(select);
             database.Remove(select);
 
+            resetField();
+            refresh();
         }
+
+    }
+    public String repeatSelect(){
+        String select ;
+        if(rbD.isSelected()){
+            select = rbD.getText();
+
+
+        }
+        else if(rbW.isSelected()){
+            select = rbW.getText();
+
+        }
+        else if(rbM.isSelected()){
+            select = rbM.getText();
+        }
+        else {
+            select ="None";
+        }
+        return  select;
 
     }
 
@@ -157,7 +211,20 @@ public class Controller {
         comboBoxMin.setValue("00");
         comboBoxHr.setValue("00");
         datePicker.setValue(LocalDate.now());
+        rbD.setSelected(false);
+        rbM.setSelected(false);
+        rbW.setSelected(false);
+        rbD.setDisable(false);
+        rbM.setDisable(false);
+        rbW.setDisable(false);
     }
+
+    public void refresh(){
+        resourceAppoint.reSet();
+        listView.setItems(resourceAppoint.getList());
+        listView.refresh();
+    }
+
 
 
 

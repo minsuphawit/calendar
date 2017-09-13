@@ -1,7 +1,8 @@
-package models;
+package Database;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import models.Appointment;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -36,11 +37,13 @@ public class Database {
                 String event  = resultSet.getString(1);
                 String date = resultSet.getString(2);
                 String time = resultSet.getString(3);
-                String month =  date.substring(0,2);
-                String day = date.substring(3,5);
-                String year = date.substring(6,8);
+                String day =  date.substring(0,2);
+                String month = date.substring(3,5);
+                String year = date.substring(6,10);
                 String hour = time.substring(0,2);
                 String min = time.substring(3,5);
+                String repeat = resultSet.getString(4);
+
 //                System.out.println("month: "+month);
 //                System.out.println("day: "+day);
 //                System.out.println("year: "+year);
@@ -48,9 +51,9 @@ public class Database {
 //                System.out.println("min: "+min);
 
 
-                listAppoint.add(new Appointment(event,Integer.parseInt(day),Integer.parseInt(month),Integer.parseInt(year),hour,min));
+                listAppoint.add(new Appointment(event,Integer.parseInt(day),Integer.parseInt(month),Integer.parseInt(year),hour,min,repeat));
 
-               // System.out.println("Event: " +event+" Date: "+date+" Time: "+time);
+                System.out.println("Event: " +event+" Date: "+date+" Time: "+time+" Repeat: "+repeat);
 
             }
 
@@ -77,8 +80,8 @@ public class Database {
 
     public void addData(Appointment appointment){
         try{
-            String query = "insert into Appointment (Event,'Date','Time') values ("+"'"+appointment.getTitle()+"','"+appointment.getDate()
-                    +"','"+appointment.getTime()+"');";
+            String query = "insert into Appointment (Event,'Date','Time','Repeat') values ("+"'"+appointment.getTitle()+"','"+appointment.getDates()
+                    +"','"+appointment.getTime()+"','"+appointment.getRepeat()+"')";
             Statement statement = conn.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException ex){
@@ -87,8 +90,8 @@ public class Database {
     }
 
     public void editData(Appointment appointment , String title){
-        String query = "update Appointment set Event = '"+appointment.getTitle()+"', 'Date' = '"+appointment.getDate()+
-                "', 'Time' = '"+appointment.getTime()+"' where Event = '"+title+"'";
+        String query = "update Appointment set Event = '"+appointment.getTitle()+"', 'Date' = '"+appointment.getDates()+
+                "', 'Time' = '"+appointment.getTime()+"','Repeat' = '"+appointment.getRepeat()+"' where Event = '"+title+"'";
         try{
 
             Statement statement = conn.createStatement();
